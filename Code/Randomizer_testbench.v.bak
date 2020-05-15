@@ -1,0 +1,41 @@
+module Randomizer_tb ();
+
+reg en,clk,reset,in;
+wire out ;
+reg [0:95] in_data = 96'hACBCD2114DAE1577C6DBF4C9;
+reg [0:95] out_data = 96'h000000000000000000000000;
+reg load_signal;
+reg load;
+localparam PERIOD = 10 ;
+
+//Unit Under Test
+Randomizer UUT (.en(en),.clk(clk),.reset(reset),.load_signal(load_signal),.load(load),.in(in),.out(out));
+integer i ;
+
+initial begin
+$monitor ("At time =%g ,counter = %d , reset=%b , in_data=%h,in = %b ,out_data=%h, out=%b",$time ,i ,reset , in_data, in , out_data,out);
+
+clk = 0 ;
+en=1;
+load_signal = 0 ;
+reset = 1 ;
+#(PERIOD) reset = 0 ;
+in=in_data[0];
+#PERIOD;
+out_data[0] = out;
+for (i=1 ; i<96 ; i=i+1)
+begin
+clk = 1;
+in=in_data[i];
+#PERIOD ;
+out_data[i] = out ;
+clk=0;
+#PERIOD;
+end
+$finish;
+
+end
+
+
+
+endmodule
